@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const URL = "mongodb+srv://mramirez16dev:F79G33A6rSTaM5ON@cluster0.f12wxs6.mongodb.net/tiendita";
+const URL = "";
 
 //configuracion mongoose
 mongoose.Promise = global.Promise;
