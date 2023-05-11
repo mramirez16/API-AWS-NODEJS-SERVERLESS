@@ -3,9 +3,53 @@ const ClienteModel = require("./src/ClienteModel");
 const PedidosModel = require("./src/PedidosModel");
 require("./src/DB");
 
-module.exports.read = async (event) => {
+module.exports.readAllandReadFilterPaginate = async (event) => {
   try {
-    const data = await ClienteModel.aggregate([
+    let body = JSON.parse(event.body);
+    let filtroTablaCliente,
+      filtroTablaPedidos = {};
+    let aggregate = [];
+    let matchPedidos = {};
+    let matchClientes = {};
+    if (!body) {
+      throw new Error("Invalid Body");
+    } else {
+      if (!body.page) {
+        body.page = 1;
+      }
+      if (!body.itemsPage) {
+        body.itemsPage = 10;
+      }
+      if (!body.sort) {
+        body.sort = {
+          name: 1,
+        };
+      }
+      if (!body.filters) {
+        body.filters = [];
+      } else {
+        for (let i = 0; i < body.filters.length; i++) {
+          filtroTablaCliente = body.filters[i];
+          matchClientes = {
+            name: filtroTablaCliente.name,
+            edad: filtroTablaCliente.edad,
+          };
+          if (filtroTablaCliente.hasOwnProperty("pedidos")) {
+            for (let j = 0; j < filtroTablaCliente.pedidos.length; j++) {
+              const elemento = filtroTablaCliente.pedidos[j];
+              filtroTablaPedidos = elemento.producto;
+            }
+            matchPedidos = {
+              $and: [{ producto: filtroTablaPedidos }],
+            };
+          }
+        }
+      }
+    }
+    aggregate = [
+      {
+        $match: matchClientes,
+      },
       {
         $lookup: {
           from: "pedidos",
@@ -13,6 +57,9 @@ module.exports.read = async (event) => {
           foreignField: "uuidCliente",
           as: "cp",
           pipeline: [
+            {
+              $match: matchPedidos,
+            },
             {
               $project: {
                 _id: 0,
@@ -33,19 +80,43 @@ module.exports.read = async (event) => {
         },
       },
       {
-        $sort: {
-          name: 1,
-        },
+        $sort: body.sort,
       },
-    ]);
+    ];
+    const agreggateCliente = ClienteModel.aggregate(aggregate);
+    const data = await ClienteModel.aggregatePaginate(agreggateCliente, {
+      page: body.page,
+      limit: body.itemsPage,
+    })
+      .then((results) => {
+        return results;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    const resultadoArray = [];
+
+    data.docs.forEach((registro) => {
+      const doc = {
+        name: registro.name,
+        activo: registro.activo,
+        edad: registro.edad,
+        uuid: registro.uuid,
+        cp: registro.cp,
+      };
+      resultadoArray.push(doc);
+    });
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         ok: true,
-        response: data,
-        responseCode: 200,
-        validations: [],
+        page: data.page,
+        totalPages: data.totalPages,
+        itemsPage: data.limit,
+        totalItems: data.totalDocs,
+        list: resultadoArray,
       }),
     };
   } catch (error) {
@@ -115,7 +186,7 @@ module.exports.create = async (event) => {
           console.log("EXISTE " + JSON.stringify(existentes));
           if (existentes[index].idProducto === datosPedidos[index].idProducto) {
             console.log("ID PRODUCTO " + datosPedidos[index].idProducto);
-            PedidosModel.updateOne(
+            await PedidosModel.updateOne(
               { idProducto: datosPedidos[index].idProducto },
               {
                 $set: {
@@ -206,91 +277,6 @@ module.exports.delete = async (event) => {
         validations: [],
       }),
       msgError: error.message,
-    };
-  }
-};
-
-module.exports.filter = async (event) => {
-  try {
-    let body = JSON.parse(event.body);
-    if (!body) {
-      throw new Error("Empty body received");
-    }
-
-    if (!body.filters) {
-      body.filters = [];
-    }
-
-    let result = [];
-    let where,
-      where2 = {};
-    for (let index = 0; index < body.filters.length; index++) {
-      where = body.filters[index];
-
-      for (let i = 0; i < where.pedidos.length; i++) {
-        const element = where.pedidos[i];
-        where2 = element.producto;
-      }
-    }
-    result = await ClienteModel.aggregate([
-      {
-        $match: { name: where.name, edad: where.edad },
-      },
-      {
-        $lookup: {
-          from: "pedidos",
-          localField: "uuid",
-          foreignField: "uuidCliente",
-          as: "cp",
-          pipeline: [
-            {
-              $match: {
-                $and: [{ producto: where2 }],
-              },
-            },
-          ],
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          name: 1,
-          activo: 1,
-          edad: 1,
-          cp: 1,
-          uuid: 1,
-        },
-      },
-    ])
-      .then((res) => {
-        console.log(res);
-        return res;
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        ok: true,
-        response: result,
-        responseCode: 200,
-        validations: [],
-      }),
-    };
-  } catch (error) {
-    console.log("Error: " + error);
-    return {
-      msgError: error.message,
-      statusCode: 500,
-      body: JSON.stringify({
-        ok: false,
-        response: null,
-        responseCode: 500,
-        validations: [],
-        msgError: error.message,
-      }),
     };
   }
 };

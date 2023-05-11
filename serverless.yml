@@ -65,11 +65,11 @@ provider:
 
 functions:
   read:
-    handler: handler.read
+    handler: handler.readAllandReadFilterPaginate
     events:
       - http:
           path: /mi-api-clientes-list
-          method: GET
+          method: POST
   create:
     handler: handler.create
     events:
@@ -82,12 +82,6 @@ functions:
       - http:
           path: /mi-api-clientes-delete/{id}
           method: DELETE
-  filter:
-    handler: handler.filter
-    events:
-      - http:
-          path: /mi-api-clientes-filter
-          method: POST
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

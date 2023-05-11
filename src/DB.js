@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const URL = "";
+const URL = "mongodb+srv://mramirez16dev:XAB1LyZM8ZSZ3vFr@cluster0.f12wxs6.mongodb.net/tiendita?retryWrites=true&w=majority";
 
 //configuracion mongoose
 mongoose.Promise = global.Promise;
@@ -14,7 +14,7 @@ db.once('open', function (){
 })
 
 db.on('error', function (){
-    console.log(`Error en la conexión a BD:: ${err}`);
+    console.log(`Error en la conexión a BD:: ${error}`);
 });
 
 const closeConnection = function (){
