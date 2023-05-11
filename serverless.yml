@@ -88,6 +88,24 @@ functions:
       - http:
           path: /mi-api-clientes-filter
           method: POST
+#  find:
+#    handler: handler.find
+#    events:
+#      - http:
+#          path: /find
+#          method: GET
+#  findByActive:
+#    handler: handler.findByActive
+#    events:
+#      - http:
+#          path: /findByActive
+#          method: GET
+#  createTest:
+#    handler: handler.createTest
+#    events:
+#      - http:
+#          path: /createTest
+#          method: POST
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

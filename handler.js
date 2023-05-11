@@ -294,3 +294,110 @@ module.exports.filter = async (event) => {
     };
   }
 };
+
+/*module.exports.find = async (event) => {
+  let response = [];
+  try {
+    response = await ClienteModel.find()
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return {
+      msgError: null,
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        response: response,
+        responseCode: 200,
+      }),
+    };
+  } catch (error) {
+    return {
+      msgError: error,
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        response: null,
+        responseCode: 500,
+        validations: [],
+        msgError: error,
+      }),
+    };
+  }
+};
+
+module.exports.findByActive = async (event) => {
+  let response = [];
+  const where = { activo: 0 };
+  try {
+    response = await ClienteModel.find(where)
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return {
+      msgError: null,
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        response: response,
+        responseCode: 200,
+      }),
+    };
+  } catch (error) {
+    return {
+      msgError: error,
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        response: null,
+        responseCode: 500,
+        validations: [],
+        msgError: error,
+      }),
+    };
+  }
+};
+
+module.exports.createTest = async (event) => {
+  const objeto = {
+    name: "TEST_DOS",
+    edad: 100,
+    activo: 1,
+    uuid: 12345,
+  };
+
+  const query = new ClienteModel(objeto)
+  try {
+    await query.save();
+    return {
+      msgError: null,
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        response: "EXITO",
+        responseCode: 200,
+      }),
+    };
+  } catch (error) {
+    console.log("Error: " + error);
+    return {
+      msgError: error,
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        response: null,
+        responseCode: 500,
+        validations: [],
+        msgError: error,
+      }),
+    };
+  }
+};*/
