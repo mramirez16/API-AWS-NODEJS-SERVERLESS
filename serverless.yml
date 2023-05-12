@@ -106,6 +106,18 @@ functions:
 #      - http:
 #          path: /createTest
 #          method: POST
+#  eliminar:
+#    handler: handler.eliminar
+#    events:
+#      - http:
+#          path: /eliminar/{uuid}
+#          method: DELETE
+#  actualizar:
+#    handler: handler.actualizar
+#    events:
+#      - http:
+#          path: /actualizar/{uuid}
+#          method: PUT
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

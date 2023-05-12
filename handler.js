@@ -364,19 +364,113 @@ module.exports.findByActive = async (event) => {
       }),
     };
   }
-};
+};*/
 
-module.exports.createTest = async (event) => {
+/*module.exports.createTest = async (event) => {
   const objeto = {
-    name: "TEST_DOS",
-    edad: 100,
-    activo: 1,
-    uuid: 12345,
+    name: "TEST_TRES",
+    edad: 20,
+    activo: 0,
+    uuid: 54321,
   };
 
-  const query = new ClienteModel(objeto)
+  const query = new ClienteModel(objeto);
   try {
     await query.save();
+    return {
+      msgError: null,
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        response: "EXITO",
+        responseCode: 200,
+      }),
+    };
+  } catch (error) {
+    console.log("Error: " + error);
+    return {
+      msgError: error,
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        response: null,
+        responseCode: 500,
+        validations: [],
+        msgError: error,
+      }),
+    };
+  }
+};*/
+
+/*module.exports.eliminar = async (event) => {
+  const { uuid } = event.pathParameters;
+
+  try {
+    if (!uuid) {
+      throw new Error("ID is required in URL");
+    }
+    const where = { uuid: uuid };
+    await ClienteModel.remove(where)
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+    return {
+      msgError: null,
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        response: "EXITO",
+        responseCode: 200,
+      }),
+    };
+  } catch (error) {
+    console.log("Error: " + error);
+    return {
+      msgError: error,
+      statusCode: 500,
+      body: JSON.stringify({
+        ok: false,
+        response: null,
+        responseCode: 500,
+        validations: [],
+        msgError: error,
+      }),
+    };
+  }
+};*/
+
+/*module.exports.actualizar = async (event) => {
+  const { uuid } = event.pathParameters;
+  const body = JSON.parse(event.body);
+
+  try {
+    if (!uuid) {
+      throw new Error("ID is required in URL");
+    }
+    if (!body) {
+      throw new Error("BODY is required");
+    }
+    const where = { uuid: uuid };
+    await ClienteModel.updateOne(where, {
+      $set: {
+        name: body.name,
+        edad: body.edad,
+        activo: body.activo,
+      },
+      
+    },
+    {
+      upsert: true
+    })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
     return {
       msgError: null,
       statusCode: 200,
